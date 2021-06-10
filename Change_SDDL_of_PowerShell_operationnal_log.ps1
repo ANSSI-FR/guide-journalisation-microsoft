@@ -1,1 +1,1 @@
-Ce contenu sera ajouté ultèrieurement.
+Ce contenu sera ajouté ultérieurement.
