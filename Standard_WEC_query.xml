@@ -1,1 +1,350 @@
-Ce contenu sera ajouté ultérieurement.
+<!-- Version 20210902_1600 -->
+<QueryList>
+  <!--
+    Cette requête WEC est basée sur celles proposées par Microsoft dans cet article : / This WEC query is based on what Microsoft proposed in this article : 
+    https://docs.microsoft.com/en-us/windows/security/threat-protection/use-windows-event-forwarding-to-assist-in-intrusion-detection
+    Ce fichier contient les annotations originales de Microsoft en anglais, non traduites / This file contains original Microsoft's annotations in english with no french translation
+    Les annotations ajoutées par l'ANSSI sont en français et en anglais / Annotations added by the ANSSI are in french and english
+    Certaines selections d'évènements ont été désactivées (commentées) lorsqu'elles concernent des produits trop spécifiques et peuvent être décommentées au besoin / Some event selections have been disabled (commented) when they concern too specific products but they can be uncommented if necessary
+    D'autres selections ont été désactivées (commentées) lorsqu'elles sont jugées peu utiles à collecter / Other event selections have been disabled (commented) when they have been considered not very interesting to collect
+  -->
+    
+  <!-- Catégorie : stratégies de restriction logicielle diverses / category : various software restriction strategies -->
+  <!-- SRP : utile uniquement si des règles SRP ont été déployées / Only useful if SRP rules have been deployed -->
+  <Query Id="0" Path="Application">
+    <Select Path="Application">*[System[(EventID='866')]]</Select>
+  </Query>  
+  <!-- AppLocker EXE events : utile uniquement si des règles d'exécutables pour Applocker ont été déployées / Only useful if applocker EXE rules have been deployed -->
+  <Query Id="1" Path="Microsoft-Windows-AppLocker/EXE and DLL">
+    <Select Path="Microsoft-Windows-AppLocker/EXE and DLL">*[UserData[RuleAndFileData[PolicyName="EXE"]]]</Select>
+  </Query>
+  <!-- AppLocker script events : utile uniquement si des règles de MSI ou de script pour Applocker ont été déployées / Only useful if applocker MSI or script rules have been deployed -->
+  <Query Id="2" Path="Microsoft-Windows-AppLocker/MSI and Script">
+    <Select Path="Microsoft-Windows-AppLocker/MSI and Script">*</Select>
+  </Query>  
+  <!-- AppLocker packaged (Modern UI) app execution -->
+  <Query Id="3" Path="Microsoft-Windows-AppLocker/Packaged app-Execution">
+    <Select Path="Microsoft-Windows-AppLocker/Packaged app-Execution">*</Select>
+  </Query>
+  <!-- AppLocker packaged (Modern UI) app installation -->
+  <Query Id="4" Path="Microsoft-Windows-AppLocker/Packaged app-Deployment">
+    <Select Path="Microsoft-Windows-AppLocker/Packaged app-Deployment">*</Select>
+  </Query>
+  <!-- CodeIntegrity (WDAC) : utile uniquement si des politiques de Code Integrity (WDAC) ont été déployées en mode enforced ou audit / Only useful if WDAC policies have been deployed in enforced or audit mode -->
+  <!-- Nombreux faux positifs sont journalisés, il est préférable de les filtrer pour réduire le bruit / A lot of false positive events are logged, they should be filtered to cut down noise -->
+  <!-- 
+  <Query Id="5" Path="Microsoft-Windows-CodeIntegrity/Operational">
+    <Select Path="Microsoft-Windows-CodeIntegrity/Operational">*[System[(EventID=3001 or EventID=3023 or EventID=3064 or EventID=3076 or EventID=3077 or EventID=3080 or EventID=3082 or EventID=3089)]]</Select>
+  </Query>
+  -->
+
+
+  <!-- Catégorie : stratégies Anti Malwares / Category : anti Malware strategies -->
+  <Query Id="10" Path="Microsoft-Windows-Windows Defender/Operational">
+    <!-- Modern Windows Defender event provider Detection events (1006-1009) and (1116-1119) -->
+    <Select Path="Microsoft-Windows-Windows Defender/Operational">*[System[( (EventID &gt;= 1006 and EventID &lt;= 1009) )]]</Select>
+    <Select Path="Microsoft-Windows-Windows Defender/Operational">*[System[( (EventID &gt;= 1116 and EventID &lt;= 1119) )]]</Select>
+    <!-- Evènement 1120 si ThreatFileHashLogging a été activé via le registre / Event 1120 if ThreatFileHashLogging has been enabled through registry -->
+    <Select Path="Microsoft-Windows-Windows Defender/Operational">*[System[(EventID=1120)]]</Select>
+  </Query>  
+  <!-- Anti-malware *old* events, but only detect events (cuts down noise)
+  Utile seulement sur les systèmes obsolètes / Useful only on obsolete systems
+  <Query Id="11" Path="System">
+    <Select Path="System">*[System[Provider[@Name='Microsoft Antimalware'] and (EventID &gt;= 1116 and EventID &lt;= 1119)]]</Select>
+  </Query>
+  -->  
+  <!-- EMET events
+  Utile uniquement si EMET (qui n'est plus supporté par Microsoft) est toujours utilisé sur certains systèmes / Only if EMET (which is not supported anymore by Microsoft) is still installed on some systems
+  <Query Id="12" Path="Application">
+    <Select Path="Application">*[System[Provider[@Name='EMET']]]</Select>
+  </Query>
+  -->
+
+  <!-- Catégorie : processus / Category : processes -->
+  <Query Id="20" Path="Security">
+    <!-- Process Create (4688) -->
+    <Select Path="Security">*[System[EventID=4688]]</Select>
+  </Query>
+  <Query Id="21" Path="Security">
+    <!-- Process Terminate (4689) -->
+    <Select Path="Security">*[System[(EventID = 4689)]]</Select>
+  </Query>
+
+  <!-- Catégorie : SysMon / Category : SysMon -->  
+  <Query Id="30" Path="Microsoft-Windows-Sysmon/Operational">
+    <!-- Modern SysMon event provider-->
+    <Select Path="Microsoft-Windows-Sysmon/Operational">*</Select>
+  </Query>  
+
+  <!-- Catégorie : authentifications et privileges / Category : authentications and privileges -->  
+  <Query Id="40" Path="Security">
+    <!-- Local credential authentication events (4776), Logon with explicit credentials (4648) -->
+    <Select Path="Security">*[System[(EventID=4776 or EventID=4648)]]</Select>
+  </Query>  
+  <Query Id="41" Path="Security">
+    <!-- Network logon events-->
+    <Select Path="Security">*[System[(EventID=4624)]] and (*[EventData[Data[@Name="LogonType"]="3"]])</Select>
+  </Query>
+  <Query Id="42" Path="Security">
+    <!-- Local logons without network or service events -->
+    <Select Path="Security">*[System[(EventID=4624)]] and (*[EventData[Data[@Name="LogonType"]!="3"]]) and (*[EventData[Data[@Name="LogonType"]!="5"]])</Select>
+  </Query>
+  <Query Id="43" Path="Security">
+    <!-- Service logon events if the user account isn't LocalSystem, NetworkService, LocalService -->
+    <Select Path="Security">*[System[(EventID=4624)]] and (*[EventData[Data[@Name="LogonType"]="5"]]) and (*[EventData[Data[@Name="TargetUserSid"] != "S-1-5-18"]]) and (*[EventData[Data[@Name="TargetUserSid"] != "S-1-5-19"]]) and (*[EventData[Data[@Name="TargetUserSid"] != "S-1-5-20"]])</Select>
+  </Query>
+  <Query Id="44" Path="Security">
+    <!-- An account Failed to Log on events -->
+    <Select Path="Security">*[System[(EventID=4625)]] and (*[EventData[Data[@Name="LogonType"]!="2"]]) </Select>
+  </Query>  
+  <!-- User logging on with Temporary profile (1511), cannot create profile, using temporary profile (1518)
+  Non collecté (peu intéressant) / Not collected (not very interesting)
+  <Query Id="45" Path="Application">
+    <Select Path="Application">*[System[Provider[@Name='Microsoft-Windows-User Profiles Service'] and (EventID=1511 or EventID=1518)]]</Select>
+  </Query> 
+  -->
+  <!--  user initiated logoff 
+  Non collecté (pas utile) / Not collected (not useful)
+  <Query Id="46" Path="Security"> 
+    <Select Path="Security">*[System[(EventID=4647)]]</Select>
+  </Query> 
+  -->
+  <!-- user logoff for all non-network logon sessions
+  Non collecté (pas utile) / Not collected (not useful)
+  <Query Id="47" Path="Security">
+    <Select Path="Security">*[System[(EventID=4634)]] and (*[EventData[Data[@Name="LogonType"] != "3"]])</Select>
+  </Query> 
+  -->
+  <!-- Logoff events - for Network Logon events
+  Non collecté (pas utile) / Not collected (not useful)
+  <Query Id="48" Path="Security">
+    <Select Path="Security">*[System[(EventID=4634)]] and (*[EventData[Data[@Name="LogonType"] = "3"]])</Select>
+  </Query> 
+  -->
+  <Query Id="49" Path="Security">
+    <!-- compte verrouillé / locked account -->
+    <Select Path="Security">*[System[(EventID=4740)]]</Select>
+  </Query>  
+  <Query Id="50" Path="Security">
+    <!-- TS Session reconnect (4778), TS Session disconnect (4779) -->
+    <Select Path="Security">*[System[(EventID=4778 or EventID=4779)]]</Select>
+  </Query>
+  <Query Id="51" Path="Microsoft-Windows-TerminalServices-RDPClient/Operational">
+    <!-- Log attempted TS connect to remote server -->
+    <!-- + "RDP ClientActiveX has connected to the server" (1025) / + "RDP ClientActiveX has connected to the server" (1025) -->
+    <Select Path="Microsoft-Windows-TerminalServices-RDPClient/Operational">*[System[(EventID=1024 or EventID=1025)]]</Select>
+  </Query>    
+  <Query Id="52" Path="Security">
+    <!-- Special Privileges (Admin-equivalent Access) assigned to new logon, excluding LocalSystem-->
+    <Select Path="Security">*[System[(EventID=4672)]]</Select>
+    <Suppress Path="Security">*[EventData[Data[1]="S-1-5-18"]]</Suppress>
+  </Query>
+  <Query Id="53" Path="Microsoft-Windows-LSA/Operational">
+    <!-- Groups assigned to new login (except for well known, built-in accounts)-->
+    <Select Path="Microsoft-Windows-LSA/Operational">*[System[(EventID=300)]] and (*[EventData[Data[@Name="TargetUserSid"] != "S-1-5-20"]]) and (*[EventData[Data[@Name="TargetUserSid"] != "S-1-5-18"]]) and (*[EventData[Data[@Name="TargetUserSid"] != "S-1-5-19"]])</Select>
+  </Query>    
+  <Query Id="54" Path="Security">
+    <!-- New User Account Created(4720), User Account Enabled (4722), User Account Disabled (4725), User Account Deleted (4726) -->
+    <Select Path="Security">*[System[(EventID=4720 or EventID=4722 or EventID=4725 or EventID=4726)]]</Select>
+  </Query>  
+  <Query Id="55" Path="Security">
+    <!-- New user added to local security group-->
+    <Select Path="Security">*[System[(EventID=4732)]]</Select>
+  </Query>
+  <Query Id="56" Path="Security">
+    <!-- New user added to global security group-->
+    <Select Path="Security">*[System[(EventID=4728)]]</Select>
+  </Query>
+  <Query Id="57" Path="Security">
+    <!-- New user added to universal security group-->
+    <Select Path="Security">*[System[(EventID=4756)]]</Select>
+  </Query>
+  <!-- User removed from local Administrator group -->
+  <!-- Utilisateur supprimé d'un groupe local "Administrators" ou "Administrateurs" (nom du groupe sur un système français) / User removed from local "Administrators" or "Administrateurs" (its french name) groups -->
+  <!-- Non collecté (pas utile) / Not collected (not useful)  
+  <Query Id="58" Path="Security">
+    <Select Path="Security">*[System[(EventID=4733)]] and (*[EventData[Data[@Name="TargetUserName"]="Administrators"]]) and (*[EventData[Data[@Name="TargetUserName"]="Administrateurs"]])</Select>
+  </Query>
+  -->
+
+  <!-- Catégorie : autres authentifications / Category : other authentication events -->
+  <Query Id="60" Path="Microsoft-Windows-SmartCard-Audit/Authentication">
+    <!-- Gets all Smart-card Card-Holder Verification (CHV) events (success and failure) performed on the host. -->
+    <!-- Utile si l'authentification par carte à puce à utilisée / Useful only if smartcards are used to perform authentications -->
+    <Select Path="Microsoft-Windows-SmartCard-Audit/Authentication">*</Select>
+  </Query>
+  <!-- RADIUS authentication events User Assigned IP address (20274), User successfully authenticated (20250), User Disconnected (20275)
+  Utile uniquement si Microsoft IAS RADIUS ou VPN sont utilisés / Useful only if Microsoft IAS RADIUS or VPN are in use  
+  <Query Id="61" Path="System"> 
+    <Select Path="System">*[System[Provider[@Name='RemoteAccess'] and (EventID=20274 or EventID=20250 or EventID=20275)]]</Select>
+  </Query>    
+  --> 
+  <!-- Wireless Lan 802.1x authentication events with Peer MAC address -->
+  <!-- Utile uniquement si 802.1x est mis en oeuvre / Useful only if 802.1x is in use -->  
+  <Query Id="62" Path="Security">
+    <Select Path="Security">*[System[(EventID=5632)]]</Select>
+  </Query> 
+  <!-- Network Policy Server events
+  Utile uniquement si Microsoft Network Policy Server est utilisé / Useful only if Microsoft Network Policy Server is in use
+  <Query Id="63" Path="Security">
+    <Select Path="Security">*[System[( (EventID &gt;= 6272 and EventID &lt;= 6280) )]]</Select>
+  </Query>  
+  -->
+  <Query Id="64" Path="Security">
+    <!-- Request made to authenticate to Wireless network (including Peer MAC (5632) -->
+    <Select Path="Security">*[System[(EventID=5632)]]</Select>
+  </Query>  
+
+  <!-- Catégorie : partages réseau / Category : network shares -->  
+  <Query Id="70" Path="Security">
+    <!-- Network share object access without IPC$ and Netlogon shares -->
+    <Select Path="Security">*[System[(EventID=5140)]] and (*[EventData[Data[@Name="ShareName"]!="\\*\IPC$"]]) and (*[EventData[Data[@Name="ShareName"]!="\\*\NetLogon"]])</Select>
+  </Query>
+  <Query Id="71" Path="Security">
+    <!-- Network Share create (5142), Network Share Delete (5144)  -->
+    <Select Path="Security">*[System[(EventID=5142 or EventID=5144)]]</Select>
+  </Query>
+  <!-- get all UNC/mapped drive successful connection
+  Not collected (inutilisé) / Non collecté (not in use)
+  <Query Id="72" Path="Microsoft-Windows-SMBClient/Operational">
+    <Select Path="Microsoft-Windows-SMBClient/Operational">*[System[(EventID=30622 or EventID=30624)]]</Select>
+  </Query>  
+  -->
+  
+  <!-- Catégorie : certificats et autres éléments cryptographiques / Category : certificates and other cryptographic items
+  Certificate Services received certificate request (4886), Approved and Certificate issued (4887), Denied request (4888)
+  CA stop/Start events CA Service Stopped (4880), CA Service Started (4881), CA DB row(s) deleted (4896), CA Template loaded (4898)
+  Utile uniquement si Microsoft Active Directory Certificate Services (ADCS) est utilisé / Useful only if Microsoft Active Directory Certificate Services (ADCS) is in use 
+  <Query Id="80" Path="Security">   
+    <Select Path="Security">*[System[(EventID=4886 or EventID=4887 or EventID=4888)]]</Select>
+  </Query>  
+  <Query Id="81" Path="Security">
+    <Select Path="Security">*[System[(EventID=4880 or EventID = 4881 or EventID = 4896 or EventID = 4898)]]</Select>
+  </Query>
+  -->
+  <!-- CAPI events Build Chain (11), Private Key accessed (70), X509 object (90)
+  Non collecté car trop verbeux / Not collected because too verbose
+  <Query Id="82" Path="Microsoft-Windows-CAPI2/Operational">
+    <Select Path="Microsoft-Windows-CAPI2/Operational">*[System[(EventID=11 or EventID=70 or EventID=90)]]</Select>
+  </Query>
+  -->  
+
+
+  <!-- Catégorie : évènements relatifs à la journalisation / Category : logging related events -->
+  <Query Id="90" Path="Security">
+    <!-- Security Log cleared events (1102), EventLog Service shutdown (1100)-->
+    <Select Path="Security">*[System[(EventID=1102 or EventID = 1100)]]</Select>
+  </Query>  
+  <Query Id="91" Path="System">
+    <!-- Other Log cleared events (104)-->
+    <Select Path="System">*[System[(EventID=104)]]</Select>
+  </Query>
+  <!-- Event log service events -->
+  <!-- Non collecté (non utilisé) / Not collected (not in use)
+  <Query Id="92" Path="System">
+    <Select Path="System">*[System[Provider[@Name='Microsoft-Windows-Eventlog']]]</Select>
+  </Query>
+  -->
+  <Query Id="93" Path="Security">
+    <!-- Event log service events specific to Security channel -->
+    <Select Path="Security">*[System[Provider[@Name='Microsoft-Windows-Eventlog']]]</Select>
+  </Query>  
+  <Query Id="94" Path="Microsoft-Windows-EventCollector/Operational">
+    <!-- pour vérifier le bon fonctionnement des serveurs WEC / to check that WEC servers are working fine -->
+    <Select Path="Microsoft-Windows-EventCollector/Operational">*[System[(Level=1 or Level=2 or Level=3)]]</Select>
+  </Query>    
+  <Query Id="95" Path="Microsoft-Windows-Forwarding/Operational">
+    <!-- pour vérifier le bon fonctionnement des WEF / to check that WEF are working fine -->
+    <Select Path="Microsoft-Windows-Forwarding/Operational">*[System[(Level=1 or Level=2 or Level=3)]]</Select>
+  </Query>    
+  <Query Id="96" Path="Security">
+    <!-- System Time Change (4616)  -->
+    <Select Path="Security">*[System[(EventID=4616)]]</Select>
+  </Query>  
+
+
+  <!-- Catégorie : modifications du système / Category : system modification events -->
+  <Query Id="100" Path="Security">
+    <!-- Registry modified events for Operations: New Registry Value created (%%1904), Existing Registry Value modified (%%1905), Registry Value Deleted (%%1906) -->
+    <!-- Requiert de configurer : https://docs.microsoft.com/en-us/windows/security/threat-protection/use-windows-event-forwarding-to-assist-in-intrusion-detection#bkmk-appendixb -->
+    <!-- Requires to configure : https://docs.microsoft.com/en-us/windows/security/threat-protection/use-windows-event-forwarding-to-assist-in-intrusion-detection#bkmk-appendixb -->
+    <!-- Il est toutefois préférable d'auditer le registre par SysMon / It is anyway preferable to audit registry through SysMon -->
+    <Select Path="Security">*[System[(EventID=4657)]] and ((*[EventData[Data[@Name="OperationType"] = "%%1904"]]) or (*[EventData[Data[@Name="OperationType"] = "%%1905"]]) or (*[EventData[Data[@Name="OperationType"] = "%%1906"]]))</Select>
+  </Query>
+  <Query Id="101" Path="Microsoft-Windows-DriverFrameworks-UserMode/Operational">
+    <!-- Detect User-Mode drivers loaded - for potential BadUSB detection. -->
+    <!-- et autres évènements USB intéressants / and other interesting USB events -->
+    <Select Path="Microsoft-Windows-DriverFrameworks-UserMode/Operational">*[System[(EventID=2003 or EventID=2004 or EventID=2006 or EventID=2010 or EventID=2100 or EventID=2101 or EventID=2105 or EventID=2106)]]</Select>
+  </Query>
+  <!-- Autre évènement USB / Other USB event -->
+  <Query Id="102" Path="Security">
+    <Select Path="Security">*[System[(EventID=6416)]]</Select>
+  </Query>    
+  <Query Id="103" Path="Microsoft-Windows-TaskScheduler/Operational">
+    <!-- Task scheduler Task Registered (106), Task Registration Deleted (141), Task Deleted (142) -->
+    <!-- + quelques autres évènements / + some more events -->
+    <Select Path="Microsoft-Windows-TaskScheduler/Operational">*[System[Provider[@Name='Microsoft-Windows-TaskScheduler'] and (EventID=106 or EventID=141 or EventID=142 or EventID=107 or EventID=140 or EventID=100 or EventID=129 or EventID=200)]]</Select>
+    <Select Path="System">*[System[Provider[@Name='Microsoft-Windows-TaskScheduler'] and (EventID=106 or EventID=141 or EventID=142 or EventID=107 or EventID=140 or EventID=100 or EventID=129 or EventID=200)]]</Select>
+  </Query>
+  <!-- Evènements des tâches planifiées modernes avec leur contenu (nouvelle, supprimée, activée, désactivée, mise à jour) / modern scheduled task events with their content (new, deleted, enabled, disabled, updated)-->
+  <Query Id="104" Path="Security">
+    <Select Path="Security">*[System[(EventID='4698' or EventID='4699' or EventID='4700' or EventID='4701' or EventID='4702')]]</Select>
+  </Query>  
+  <Query Id="105" Path="System">
+    <!-- Service Install (7000), service start failure (7045), new service (4697) -->
+    <!-- Modifié pour une meilleure précision / Modified for better precision -->
+    <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and EventID = 7000 and param2 != "%%1053"]]</Select>
+    <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and EventID = 7045]]</Select>
+  </Query>  
+
+  <!-- Catégorie : crashes / Category : crashes -->    
+  <Query Id="110" Path="Application">
+    <!-- WER events for application crashes only -->
+    <Select Path="Application">*[System[Provider[@Name='Windows Error Reporting']]] and (*[EventData[Data[3] ="APPCRASH"]])</Select>
+  </Query>    
+  <Query Id="111" Path="Application">
+    <!-- Application crash/hang events, similar to WER/1001. These include full path to faulting EXE/Module.-->
+    <Select Path="Application">*[System[Provider[@Name='Application Error'] and (EventID=1000)]]</Select>
+    <Select Path="Application">*[System[Provider[@Name='Application Hang'] and (EventID=1002)]]</Select>
+  </Query>  
+
+  <!-- Catégorie : DNS / Category : DNS -->  
+  <!-- DNS Client events Query Completed (3008)
+  Non collecté, privilégier leur journalisation par SysMon / Not collected, prefer DNS logging through SysMon
+  <Query Id="120" Path="Microsoft-Windows-DNS-Client/Operational">
+    <Select Path="Microsoft-Windows-DNS-Client/Operational">*[System[(EventID=3008)]]</Select>
+    suppresses local machine name resolution events
+    <Suppress Path="Microsoft-Windows-DNS-Client/Operational">*[EventData[Data[@Name="QueryOptions"]="140737488355328"]]</Suppress>
+    suppresses empty name resolution events
+    <Suppress Path="Microsoft-Windows-DNS-Client/Operational">*[EventData[Data[@Name="QueryResults"]=""]]</Suppress>
+  </Query>  
+  -->
+  
+  <!-- Catégorie : PowerShell & WinRM / Category : PowerShell & WinRM -->    
+  <Query Id="130" Path="Microsoft-Windows-PowerShell/Operational">
+    <!-- PowerShell execute block activity (4103), Remote Command(4104), Start Command(4105), Stop Command(4106) -->
+    <Select Path="Microsoft-Windows-PowerShell/Operational">*[System[(EventID=4103 or EventID=4104 or EventID=4105 or EventID=4106)]]</Select>
+  </Query>
+  <Query Id="131" Path="Windows PowerShell">
+    <!-- Legacy PowerShell pipeline execution details (800) -->
+    <Select Path="Windows PowerShell">*[System[(EventID=800)]]</Select>
+  </Query>
+  <Query Id="132" Path="Microsoft-Windows-WinRM/Operational">
+    <!-- Evènements WinRM / WinRM Events -->
+    <Select Path="Microsoft-Windows-WinRM/Operational">*[System[(Level=1 or Level=2 or Level=3)]]</Select>
+  </Query>  
+
+  <!-- Catégorie : démarrages et arrêts du système / Category : system start and shutdown -->     
+  <Query Id="140" Path="System">
+    <!-- System startup (12 - includes OS/SP/Version) -->
+    <!-- Les journaux d'extinction ne sont pas collectés (pas utiles) / Shutdown events are not collected (not useful) -->
+    <Select Path="System">*[System[Provider[@Name='Microsoft-Windows-Kernel-General'] and (EventID=12)]]</Select>
+    <!-- <Select Path="System">*[System[Provider[@Name='Microsoft-Windows-Kernel-General'] and (EventID=13)]]</Select> -->
+  </Query>  
+  <!-- Shutdown initiate requests, with user, process and reason (if supplied)
+  Non collecté (pas utile) / Not collected (not useful)
+  <Query Id="151" Path="System">
+    <Select Path="System">*[System[Provider[@Name='USER32'] and (EventID=1074)]]</Select>
+  </Query>
+  -->
+</QueryList>
