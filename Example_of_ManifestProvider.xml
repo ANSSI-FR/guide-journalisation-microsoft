@@ -1,1 +1,119 @@
-Ce contenu sera ajouté ultérieurement.
+<?xml version="1.0"?>
+<instrumentationManifest xsi:schemaLocation="http://schemas.microsoft.com/win/2004/08/events eventman.xsd" xmlns="http://schemas.microsoft.com/win/2004/08/events" xmlns:win="http://manifests.microsoft.com/win/2004/08/windows/events" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:trace="http://schemas.microsoft.com/win/2004/08/events/trace">
+	<instrumentation>
+		<events>
+			<!-- Ce manifest est un exemple qui accompagne le guide "https://www.ssi.gouv.fr/journalisation-windows" l'ANSSI -->		
+			<!-- Documentation pour la création de manifest d'instrumentation : https://docs.microsoft.com/fr-fr/windows/win32/wes/defining-channels -->
+			<!-- Article de blog de Microsoft proposant un tutotiel de création de manifest : https://docs.microsoft.com/fr-fr/archive/blogs/russellt/creating-custom-windows-event-forwarding-logs -->
+			<!-- Provider pour les journaux Legacy (Application, Security, System) -->
+			<provider name="WEC-T2-Legacy" symbol="WEC_T2_Legacy" guid="{17A89D9F-61D2-4066-9085-B974FDD1EA01}" resourceFileName="C:\Windows\system32\WECEventChannels.dll" messageFileName="c:\Windows\system32\WECEventChannels.dll">
+				<events>
+					<event symbol="DUMMY_EVENT" value="100" version="0" template="DUMMY_TEMPLATE" message="$(string.Custom Forwarded Events.event.100.message)">
+					</event>
+				</events>
+				<channels>
+					<channel name="WEC-T2-Legacy-System" type="Operational" enabled="true"></channel>
+					<channel name="WEC-T2-Legacy-Application" type="Operational" enabled="true"></channel>
+					<channel name="WEC-T2-Legacy-Security" type="Operational" enabled="true"></channel>
+				</channels>
+				<templates>
+					<template tid="DUMMY_TEMPLATE">
+						<data name="Prop_UnicodeString" inType="win:UnicodeString" outType="xs:string">
+						</data>
+						<data name="PropUInt32" inType="win:UInt32" outType="xs:unsignedInt">
+						</data>
+					</template>
+				</templates>					
+			</provider>
+			<!-- Provider pour les journaux des fonctionnalités liées à la restriction de code (applocker, SRP, CI...) -->
+			<provider name="WEC-T2-CodeRestriction" symbol="WEC_T2_Others_AppLocker" guid="{17A89D9F-61D2-4066-9085-B974FDD1EA02}" resourceFileName="C:\Windows\system32\WECEventChannels.dll" messageFileName="c:\Windows\system32\WECEventChannels.dll">
+				<events>
+					<event symbol="DUMMY_EVENT" value="100" version="0" template="DUMMY_TEMPLATE" message="$(string.Custom Forwarded Events.event.100.message)">
+					</event>
+				</events>
+				<channels>
+					<channel name="WEC-T2-CodeRestriction-AppLocker EXE and DLL" type="Operational" enabled="true"></channel>
+					<channel name="WEC-T2-CodeRestriction-AppLocker MSI and Script" type="Operational" enabled="true"></channel>
+					<channel name="WEC-T2-CodeRestriction-CodeIntegrity" type="Operational" enabled="true"></channel>					
+				</channels>
+				<templates>
+					<template tid="DUMMY_TEMPLATE">
+						<data name="Prop_UnicodeString" inType="win:UnicodeString" outType="xs:string">
+						</data>
+						<data name="PropUInt32" inType="win:UInt32" outType="xs:unsignedInt">
+						</data>
+					</template>
+				</templates>					
+			</provider>		
+			<!-- Provider pour les journaux PowerShell -->
+			<provider name="WEC-T2-Powershell" symbol="WEC_T2_Others_Powershell" guid="{17A89D9F-61D2-4066-9085-B974FDD1EA03}" resourceFileName="C:\Windows\system32\WECEventChannels.dll" messageFileName="c:\Windows\system32\WECEventChannels.dll">
+				<events>
+					<event symbol="DUMMY_EVENT" value="100" version="0" template="DUMMY_TEMPLATE" message="$(string.Custom Forwarded Events.event.100.message)">
+					</event>
+				</events>
+				<channels>
+					<channel name="WEC-T2-Powershell-Operational" type="Operational" enabled="true"></channel>
+				</channels>
+				<templates>
+					<template tid="DUMMY_TEMPLATE">
+						<data name="Prop_UnicodeString" inType="win:UnicodeString" outType="xs:string">
+						</data>
+						<data name="PropUInt32" inType="win:UInt32" outType="xs:unsignedInt">
+						</data>
+					</template>
+				</templates>					
+			</provider>			
+			<!-- Provider pour les journaux des fonctionnalités liées à Windows Defender (antivirus, Exploit Protection, DeviceGuard, etc.) -->
+			<provider name="WEC-T2-WindowsDefender" symbol="WEC_T2_Others_WindowsDefender" guid="{17A89D9F-61D2-4066-9085-B974FDD1EA04}" resourceFileName="C:\Windows\system32\WECEventChannels.dll" messageFileName="c:\Windows\system32\WECEventChannels.dll">
+				<events>
+					<event symbol="DUMMY_EVENT" value="100" version="0" template="DUMMY_TEMPLATE" message="$(string.Custom Forwarded Events.event.100.message)">
+					</event>
+				</events>
+				<channels>
+					<channel name="WEC-T2-WindowsDefender-EndPointProtection" type="Operational" enabled="true"></channel>
+					<channel name="WEC-T2-WindowsDefender-DeviceGuard" type="Operational" enabled="true"></channel>		
+					<channel name="WEC-T2-WindowsDefender-ExploitProtection" type="Operational" enabled="true"></channel>										
+				</channels>
+				<templates>
+					<template tid="DUMMY_TEMPLATE">
+						<data name="Prop_UnicodeString" inType="win:UnicodeString" outType="xs:string">
+						</data>
+						<data name="PropUInt32" inType="win:UInt32" outType="xs:unsignedInt">
+						</data>
+					</template>
+				</templates>					
+			</provider>			
+			<!-- Provider pour les journaux Sysmon -->
+			<provider name="WEC-T2-Sysmon" symbol="WEC_T2_Others_Sysmon" guid="{17A89D9F-61D2-4066-9085-B974FDD1EA05}" resourceFileName="C:\Windows\system32\WECEventChannels.dll" messageFileName="c:\Windows\system32\WECEventChannels.dll">
+				<events>
+					<event symbol="DUMMY_EVENT" value="100" version="0" template="DUMMY_TEMPLATE" message="$(string.Custom Forwarded Events.event.100.message)">
+					</event>
+				</events>
+				<channels>
+					<channel name="WEC-T2-Sysmon-General" type="Operational" enabled="true"></channel>										
+				</channels>
+				<templates>
+					<template tid="DUMMY_TEMPLATE">
+						<data name="Prop_UnicodeString" inType="win:UnicodeString" outType="xs:string">
+						</data>
+						<data name="PropUInt32" inType="win:UInt32" outType="xs:unsignedInt">
+						</data>
+					</template>
+				</templates>					
+			</provider>
+			<!--  Il est possible d'ajouter des dizaines d'autres providers de cette manière,  -->
+			<!--  à la condition de ne pas renseigner l'attribut "Message=" des balises "<provider>"  -->
+			<!--  sans quoi il faudra utiliser des MessageTables à partir du 17ème provider.  -->
+			<!--  Pour plus d'informations : https://docs.microsoft.com/en-us/windows/win32/wes/eventmanifestschema-eventstype-complextype  -->
+		</events>
+	</instrumentation>
+	<localization>
+		<resources culture="en-US">
+			<stringTable>
+				<string id="Custom Forwarded Events.event.100.message" value="Prop_UnicodeString=%1;%n
+                  Prop_UInt32=%2;%n">
+				</string>
+			</stringTable>
+		</resources>
+	</localization>	
+</instrumentationManifest>
