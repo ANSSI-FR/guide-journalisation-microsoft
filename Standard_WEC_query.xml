@@ -291,10 +291,11 @@
     <Select Path="Security">*[System[(EventID='4698' or EventID='4699' or EventID='4700' or EventID='4701' or EventID='4702')]]</Select>
   </Query>  
   <Query Id="105" Path="System">
-    <!-- Service Install (7000), service start failure (7045), new service (4697) -->
+    <!-- Service Install (7045), service start failure (7000), new service (4697) -->
     <!-- Modifié pour une meilleure précision / Modified for better precision -->
     <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and EventID = 7000 and param2 != "%%1053"]]</Select>
     <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and EventID = 7045]]</Select>
+    <Select Path="Security">*[System[(EventID=4697)]]</Select>
   </Query>  
 
   <!-- Catégorie : crashes / Category : crashes -->    
