@@ -1,1 +1,38 @@
-Ce contenu sera ajouté ultérieurement.
+<?xml version="1.0" encoding="utf-8"?>
+<ScheduledTasks clsid="{CC63F200-7309-4ba0-B154-A71CD118DBCC}"><ImmediateTaskV2 
+clsid="{9756B581-76EC-4169-9AFC-0CA8D43ADB5F}" name="GPO_C_SysmonDeployment" image="0" 
+changed="2020-06-12 10:38:09" uid="{FF46700E-8B53-456E-9033-92B51F830F6E}" userContext="0" 
+removePolicy="0" desc="Deploys the latest version of sysmon"><Properties action="C" 
+name="GPO_C_SysmonDeployment" runAs="NT AUTHORITY\System" logonType="S4U"><Task 
+version="1.2"><RegistrationInfo><Author>AD\T0_Adm_bss</Author><Description>Deploys the latest 
+version of sysmon</Description></RegistrationInfo><Principals><Principal id="Author"><UserId>NT 
+AUTHORITY\System</UserId><LogonType>S4U</LogonType><RunLevel>HighestAvailable</RunLevel></Principal>
+</Principals><Settings><IdleSettings><Duration>PT5M</Duration><WaitTimeout>PT1H</WaitTimeout><
+StopOnIdleEnd>false</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings><
+MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>true</
+DisallowStartIfOnBatteries><StopIfGoingOnBatteries>false</StopIfGoingOnBatteries><AllowHardTerminate
+>false</AllowHardTerminate><StartWhenAvailable>true</StartWhenAvailable><AllowStartOnDemand>false</
+AllowStartOnDemand><Enabled>true</Enabled><Hidden>false</Hidden><ExecutionTimeLimit>PT1H</
+ExecutionTimeLimit><Priority>7</Priority><DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter></
+Settings><Triggers><TimeTrigger><StartBoundary>%LocalTimeXmlEx%</StartBoundary><EndBoundary>%
+LocalTimeXmlEx%</EndBoundary><Enabled>true</Enabled></TimeTrigger></Triggers><Actions 
+Context="Author"><Exec><Command>powershell</Command><Arguments>-ExecutionPolicy bypass -File 
+\\ad.lan\SYSVOL\ad.lan\scripts\sysmon\GPO_C_Sysmon_Deployment.ps1</Arguments></Exec></Actions></Task
+></Properties><Filters><FilterCollection filterName="" filterInfo="Sysmon n'est pas installé" 
+bool="AND" not="0"><FilterRegistry bool="AND" not="1" type="KEYEXISTS" hive="HKEY_LOCAL_MACHINE" 
+key="SYSTEM\CurrentControlSet\Services\Sysmon" valueName="" valueType="" valueData="" min="0.0.0.0" 
+max="0.0.0.0" gte="1" lte="0"/><FilterRegistry bool="AND" not="1" type="KEYEXISTS" 
+hive="HKEY_LOCAL_MACHINE" key="SYSTEM\CurrentControlSet\Services\Sysmon64" valueName="" valueType="" 
+valueData="" min="0.0.0.0" max="0.0.0.0" gte="1" lte="0"/></FilterCollection><FilterCollection 
+bool="OR" not="0"><FilterCollection filterName="" filterInfo="La version de sysmon est obsolète" 
+bool="AND" not="0"><FilterFile bool="AND" not="0" path="%WindowsDir%\Sysmon.exe" type="VERSION" 
+folder="0" min="0.0.0.0" max="11.0.0.0" gte="1" lte="0"/><FilterFile bool="OR" not="0" 
+path="%WindowsDir%\Sysmon64.exe" type="VERSION" folder="0" min="0.0.0.0" max="11.0.0.0" gte="1" 
+lte="0"/></FilterCollection><FilterCollection filterName="" filterInfo="Sysmon est installé" 
+bool="AND" not="0"><FilterRegistry bool="AND" not="0" type="KEYEXISTS" hive="HKEY_LOCAL_MACHINE" 
+key="SYSTEM\CurrentControlSet\Services\Sysmon64" valueName="" valueType="" valueData="" 
+min="0.0.0.0" max="0.0.0.0" gte="1" lte="0"/><FilterRegistry bool="OR" not="0" type="KEYEXISTS" 
+hive="HKEY_LOCAL_MACHINE" key="SYSTEM\CurrentControlSet\Services\Sysmon" valueName="" valueType="" 
+valueData="" min="0.0.0.0" max="0.0.0.0" gte="1" 
+lte="0"/></FilterCollection></FilterCollection></Filters></ImmediateTaskV2>
+</ScheduledTasks>
