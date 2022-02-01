@@ -295,6 +295,11 @@
     <!-- Modifié pour une meilleure précision / Modified for better precision -->
     <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and EventID = 7000 and param2 != "%%1053"]]</Select>
     <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and EventID = 7045]]</Select>
+    <!-- Les évènements 4697 peuvent également être utiles pour une journalisation avancée / For advanced detection, event ID 4697 may also be useful -->
+    <!-- Event 4697 includes information about the session that installed the service and allows to pivot on it (SubjectLogonID) -->
+    <!-- Event 7045 has a plain text value for the ServiceType and ServiceStartType fields which is more convenient when the logs are directly injected into a SIEM whereas 4697 events have these values in hexadecimal format which must be translated -->
+    <!-- A décommenter si besoin : / To be uncommented is necessary : -->
+    <!-- <Select Path="Security">*[System[(EventID=4697)]]</Select> -->
   </Query>  
 
   <!-- Catégorie : crashes / Category : crashes -->    
