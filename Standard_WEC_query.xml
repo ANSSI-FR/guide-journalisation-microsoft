@@ -199,6 +199,8 @@
   <Query Id="70" Path="Security">
     <!-- Network share object access without IPC$ and Netlogon shares -->
     <Select Path="Security">*[System[(EventID=5140)]] and (*[EventData[Data[@Name="ShareName"]!="\\*\IPC$"]]) and (*[EventData[Data[@Name="ShareName"]!="\\*\NetLogon"]])</Select>
+    <!-- Network share object access with selected IPC$ access to administrative shares -->
+    <Select Path="Security">*[System[(EventID=5145)] and ((EventData[Data[@Name="ShareName"]="\\*\IPC$"] and (EventData[Data[@Name="RelativeTargetName"]!="spoolss"] and EventData[Data[@Name="RelativeTargetName"]!="lsarpc"] and EventData[Data[@Name="RelativeTargetName"]!="NETLOGON"] and EventData[Data[@Name="RelativeTargetName"]!="srvsvc"])) or EventData[Data[@Name="ShareName"]="\\*\C$"] or EventData[Data[@Name="ShareName"]="\\*\ADMIN$"])]</Select>
   </Query>
   <Query Id="71" Path="Security">
     <!-- Network Share create (5142), Network Share Delete (5144)  -->
