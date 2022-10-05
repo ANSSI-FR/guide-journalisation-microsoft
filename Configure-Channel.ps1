@@ -162,6 +162,7 @@ function Log {
     {
       $err_msg = $_
       Write-Output "[ERROR] calling Log function with an unknown event type '$event_type_str'"
+      Write-Output "[ERROR] Error message: $err_msg"
       Return
     }
 
@@ -213,8 +214,8 @@ function Log-Channel-Info {
   }
 
   # keep dates only if there are not null
-  if ( $channel.LastAccessTime -ne $null ) { $event_data["LastAcessTime"] = $channel.LastAccessTime.ToString("yyyy-MM-ddThh:mm:ssZ") }
-  if ( $channel.LastWriteTime -ne $null ) { $event_data["LastWriteTime"] = $channel.LastWriteTime.ToString("yyyy-MM-ddThh:mm:ssZ") }
+  if ( $null -ne $channel.LastAccessTime ) { $event_data["LastAcessTime"] = $channel.LastAccessTime.ToString("yyyy-MM-ddThh:mm:ssZ") }
+  if ( $null -ne $channel.LastWriteTime ) { $event_data["LastWriteTime"] = $channel.LastWriteTime.ToString("yyyy-MM-ddThh:mm:ssZ") }
 
   # convert isEnabled boolean to string for reporting
   $change_type = If ($channel.IsEnabled) {"enabled"} Else {"disabled"}
@@ -472,7 +473,7 @@ foreach ($event_log_channel in $event_log_channel_array)
 
 
   # Change channel max size if needed
-  If ( $channels_max_size_hash[$log_name] -ne $null )
+  If ( $null -ne $channels_max_size_hash[$log_name] )
   {
     Change-Channel-MaxSize $event_log_channel $channels_max_size_hash[$log_name] $dryRun
   }
@@ -484,7 +485,7 @@ foreach ($event_log_channel in $event_log_channel_array)
   If ($APPLY_LOGGING_POLICY_EXTENSION )
   {
     # check if we want to increase this particular channel max size
-    If ($other_channels_max_size_hash[$log_name] -ne $null)
+    If ( $null -ne $other_channels_max_size_hash[$log_name] )
     {
       Change-Channel-MaxSize $event_log_channel $other_channels_max_size_hash[$log_name] $dryRun
     }
