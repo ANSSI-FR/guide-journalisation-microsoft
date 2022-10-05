@@ -438,7 +438,7 @@ function bytes_to_hr_str {
 # Load the event source if not already loaded. This will fail if the event source is already assigned to a different log.
 If ([System.Diagnostics.EventLog]::SourceExists($source) -eq $false)
 {
-    [System.Diagnostics.EventLog]::CreateEventSource($source, $evtlog)
+    [System.Diagnostics.EventLog]::CreateEventSource($source, $event_log)
 }
 
 $script_start_time = Get-Date
