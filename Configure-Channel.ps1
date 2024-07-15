@@ -8,7 +8,7 @@
   Il permet aussi d'appliquer les recommandations de l'ANSSI sur les journaux Windows à activer et leurs tailles
   maximales.
   Les changements appliqués sont indiqués dans la section "Configuration de la politique de journalisation" du script.
-  Par défaut, les recommandations de base et d'extension sont appliqués.
+  Par défaut, les recommandations de base et d'extension sont appliquées.
   Tout changement est réversible.
 .PARAMETER -DryRun
   Affiche les changements qui seraient appliqués par le script sans les appliquer
@@ -64,7 +64,7 @@ $channels_to_activate_array = @(
 $channels_max_size_hash = @{
   Security      = 1000000000 ; # 1 Go
   Application   = 50000000 ;   # 50 Mo
-  Installation  = 50000000 ;   # 50 Mo
+  Setup         = 50000000 ;   # 50 Mo
   System        = 50000000 ;   # 50 Mo
 }
 
@@ -105,9 +105,9 @@ $other_channels_max_size_hash = @{
   "Microsoft-Windows-VPN-Client/Operational"= 20000000; # 20 Mo
   "Microsoft-Windows-Wired-AutoConfig/Operational"= 20000000; # 20 Mo
   "Microsoft-Windows-WLAN-AutoConfig/Operational" = 20000000; # 20 Mo
-  "Microsoft-Windows/Win32k/Operational" = 20000000; # 20 Mo
+  "Microsoft-Windows-Win32k/Operational" = 20000000; # 20 Mo
   "Microsoft-Windows-Windows Firewall With Advanced Security/Firewall" = 20000000; # 20 Mo
-  "Microsoft-Windows-WindowsUpdateClient/" = 20000000; # 20 Mo
+  "Microsoft-Windows-WindowsUpdateClient/Operational" = 20000000; # 20 Mo
   "Microsoft-Windows-WMI-Activity/Operational" = 20000000; # 20 Mo
   "Microsoft Office Alerts (OAlerts)" = 20000000; # 20 Mo
   "Windows PowerShell" = 20000000; # 20 Mo
