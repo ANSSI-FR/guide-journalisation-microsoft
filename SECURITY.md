@@ -1,10 +1,10 @@
 # Politique de sécurité
 
-## Signalement d’une vulnérabilité
+## Signalement d’un problème de sécurité
 
-Si vous découvrez une vulnérabilité dans ce projet, veuillez nous aider à la gérer de manière responsable en suivant ces étapes :
+Si vous découvrez un problème de sécurité dans ce projet, veuillez nous aider à le gérer de manière responsable en suivant ces étapes :
 
-1. **Ne divulguez pas publiquement la vulnérabilité.**
+1. **Ne divulguez pas publiquement le problème de sécurité.**
 2. Contactez-nous directement en créant un nouveau rapport de sécurité décrivant votre découverte. Alternativement, vous pouvez envoyer un mail à [opensource@ssi.gouv.fr](mailto:opensource@ssi.gouv.fr) en nous fournissant les détails suivants :
     * Une description claire du problème.
     * Les étapes pour reproduire la vulnérabilité.
