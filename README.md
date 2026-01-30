@@ -10,7 +10,9 @@
 
 *Ce projet est édité par l'[ANSSI](https://cyber.gouv.fr/). Pour en savoir plus, voir la [page dédiée à la stratégie open source de l'ANSSI](https://cyber.gouv.fr/open-source-lanssi). Vous pouvez également cliquer sur les badges pour en savoir plus sur leur signification.*
 
-Ce dépôt met à disposition le contenu technique pointé par le guide https://www.ssi.gouv.fr/journalisation-windows de l'ANSSI.
+Ce dépôt met à disposition le contenu technique pointé par le guide  guide ANSSI [Sécuriser la 
+journalisation dans un environnement Microsoft Active 
+Directory](https://messervices.cyber.gouv.fr/guides/securiser-la-journalisation-dans-un-environnement-microsoft-active-directory).
 
 > [!WARNING]
 > Plusieurs problèmes ont été identifiés sur la collecte des journaux systèmes Windows, vraisemblablement liés à la migration de serveurs WEC vers Windows Server 2025.
